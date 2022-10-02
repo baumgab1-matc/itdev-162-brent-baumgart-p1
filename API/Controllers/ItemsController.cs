@@ -74,4 +74,19 @@ public class ItemsController : ControllerBase
         // put was successful, just return nothing. Might want to change this later 
         return NoContent();
     }
+
+    // DELETE: api/items/42
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteItem(int id)
+    {
+        var itemToDelete = await _context.Items.FindAsync(id);
+
+        if (itemToDelete is null) return NotFound();
+
+        _context.Items.Remove(itemToDelete);
+        await _context.SaveChangesAsync();
+
+        // delete was successful, just return nothing. Might want to change this later 
+        return NoContent();
+    }
 }

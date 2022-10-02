@@ -83,5 +83,19 @@ public class GradsController : ControllerBase
         return NoContent();
     }
 
+    // DELETE: api/grads/42
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteGrad(int id)
+    {
+        var gradToDelete = await _context.Grads.FindAsync(id);
+
+        if (gradToDelete is null) return NotFound();
+
+        _context.Grads.Remove(gradToDelete);
+        await _context.SaveChangesAsync();
+
+        // delete was successful, just return nothing. Might want to change this later 
+        return NoContent();
+    }
 
 }
