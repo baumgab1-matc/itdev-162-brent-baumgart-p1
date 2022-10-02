@@ -16,7 +16,7 @@ public class ItemsController : ControllerBase
         _context = context;
     }
 
-    // GET: 
+    // GET: api/items
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Item>>> GetItems()
     {
@@ -24,7 +24,7 @@ public class ItemsController : ControllerBase
         return Ok(items);
     }
 
-    //GET: /id
+    //GET: api/items/42
     [HttpGet("{id}")]
     public async Task<ActionResult<Item>> GetItem(int id)
     {
@@ -36,12 +36,42 @@ public class ItemsController : ControllerBase
         return foundItem;
     }
 
-    // POST
+    // POST api/items
     [HttpPost]
     public async Task<ActionResult<Item>> PostItem(Item item) {
         _context.Items.Add(item);
         await _context.SaveChangesAsync();
 
         return CreatedAtAction("GetItem", new { id = item.Id }, item);
+    }
+
+    // PUT: api/items/42
+    [HttpPut("{id}")]
+    public async Task<IActionResult> PutItem(int id, Item itemToUpdate)
+    {
+        if (id != itemToUpdate.Id)
+        {
+            return BadRequest("Id is invalid");
+        }
+
+        // updates an item that a grad has
+        _context.Entry(itemToUpdate).State = EntityState.Modified;
+
+        bool itemExists = _context.Items.Any(x => x.Id == id);
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {   
+            if (!itemExists) {
+                return NotFound();
+            } else {
+                throw; 
+            }
+        }
+        
+        // put was successful, just return nothing. Might want to change this later 
+        return NoContent();
     }
 }

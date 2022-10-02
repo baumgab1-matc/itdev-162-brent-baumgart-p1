@@ -16,7 +16,7 @@ public class GradsController : ControllerBase
         _context = context;
     }
 
-    // GET: 
+    // GET: api/grads
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Grad>>> GetGrads()
     {  
@@ -27,7 +27,7 @@ public class GradsController : ControllerBase
         return Ok(grads);
     }
 
-    //GET: /id
+    //GET: api/grads/42
     [HttpGet("{id}")]
     public async Task<ActionResult<List<Grad>>> GetGrad(int id)
     {
@@ -41,7 +41,7 @@ public class GradsController : ControllerBase
         return foundGrad;
     }
 
-    // POST
+    // POST api/grads
     [HttpPost]
     public async Task<ActionResult<Grad>> PostGrad(Grad grad) {
         _context.Grads.Add(grad);
@@ -49,4 +49,39 @@ public class GradsController : ControllerBase
 
         return CreatedAtAction("GetGrad", new { id = grad.Id }, grad);
     }
+
+
+    // PUT: api/grads/42
+    [HttpPut("{id}")]
+    public async Task<IActionResult> PutGrad(int id, Grad gradToUpdate)
+    {
+        if (id != gradToUpdate.Id)
+        {
+            return BadRequest("Id is invalid");
+        }
+
+        // This just updates the grads username for now
+        // if you want to update a grads item, you have to use the items controlller for now
+        _context.Entry(gradToUpdate).State = EntityState.Modified;
+
+        // docs mentioned a scenario where one user deletes while another updates, this try-catch is handling that
+        bool gradExists = _context.Grads.Any(x => x.Id == id);
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {   
+            if (!gradExists) {
+                return NotFound();
+            } else {
+                throw; 
+            }
+        }
+        
+        // put was successful, just return nothing. Might want to change this later 
+        return NoContent();
+    }
+
+
 }
