@@ -5,8 +5,8 @@ namespace Persistence
 {
     public class DataContext: DbContext
     {
-        public DbSet<Grad> Grads { get; set; }
-        public DbSet<Item> Items { get; set; }
+        public DbSet<Grad> Grads { get; set; } = null!;
+        public DbSet<Item> Items { get; set; } = null!;
 
         public string DbPath { get; }
 
