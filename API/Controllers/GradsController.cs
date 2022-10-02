@@ -6,12 +6,12 @@ using Microsoft.EntityFrameworkCore;
 namespace API.Controllers;
 
 [ApiController]
-[Route("[controller]")]
-public class GradController : ControllerBase
+[Route("api/[controller]")]
+public class GradsController : ControllerBase
 {
     private readonly DataContext _context;
 
-    public GradController(DataContext context)
+    public GradsController(DataContext context)
     {
         _context = context;
     }
