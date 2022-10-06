@@ -1,7 +1,11 @@
-<h1>{{title}}</h1>
+<app-navbar></app-navbar>
+
+<!-- TODO do hero/jumbotron or whatever you want to call it later, just focusing on getting content on page now -->
+<!-- jumbotron her -->
 
 
 
-<ul>
-  <li *ngFor="let grad of grads">{{grad.userName}}</li>
-</ul>
+<div class="container pt-5">
+  <router-outlet></router-outlet>
+</div>
+
