@@ -4,8 +4,10 @@
         <div class="card" style="width: 18rem;">
             <div class="card-body">
             <h2 class="card-title">{{grad.userName}}</h2>
-            <!-- todo add a grad description or something more here for project 2 -->
-            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+
+            <!-- show how many items a user is selling, just trying to get something on page will clean this up for project 2 -->
+            <p>{{grad.userName}} is selling {{grad.items.length}} items</p>
+
             <a [routerLink]="['/profile', grad.id]">View Profile</a>
             </div>
         </div>
