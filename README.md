@@ -1,12 +1,12 @@
 # itdev-162-brent-baumgart-p1
  
 ## Requirement 1
-Project description - Create a site that will allow grads to sell back books or anything school related they no longer need. This will be further development
+Project description - Create a site that will allow grads to sell back books or anything school related they no longer need. This will be further developed
 for project 2.
  
 Feature list - API allows for CRUD operations. Frontend, for now, will just loop through data retrieved from backend and display it on page
  
-Created a trello board for task
+Created a trello board for tasks
  
  
 ## Requirement 2, Option 1

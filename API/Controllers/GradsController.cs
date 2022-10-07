@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
+// TODO - refactor controllers to use DTOs for project 2, avoiding to do now as project is still in development
 [ApiController]
 [Route("api/[controller]")]
 public class GradsController : ControllerBase
@@ -44,6 +45,7 @@ public class GradsController : ControllerBase
     // POST api/grads
     [HttpPost]
     public async Task<ActionResult<Grad>> PostGrad(Grad grad) {
+
         _context.Grads.Add(grad);
         await _context.SaveChangesAsync();
 
