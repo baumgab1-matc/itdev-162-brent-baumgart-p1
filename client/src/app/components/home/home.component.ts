@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-
+import { GradService } from 'src/app/services/grad.service';
+import { Grad } from '../../interfaces/grad';
 
 @Component({
   selector: 'app-home',
@@ -9,16 +9,12 @@ import { HttpClient } from '@angular/common/http';
 })
 export class HomeComponent implements OnInit {
   title = 'client';
-  grads: any;
+  grads: Grad[] = [];
 
-  constructor(private http: HttpClient) {
-
-  }
+  constructor(private gradService: GradService) {}
 
   ngOnInit(): void {
-    this.http.get('http://localhost:5223/api/grads').subscribe(
-      response => { this.grads = response},
-      error => { console.log(error) }
-    );
+    this.gradService.getGrads().subscribe((grads) => (this.grads = grads));
   }
+
 }

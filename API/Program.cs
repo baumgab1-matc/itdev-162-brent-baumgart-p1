@@ -1,3 +1,4 @@
+using Domain;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
@@ -9,6 +10,7 @@ builder.Services.AddCors();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<DataContext>();
+builder.Services.AddAutoMapper(typeof(MapperConfig));
 
 var app = builder.Build();
 

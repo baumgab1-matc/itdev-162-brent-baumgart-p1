@@ -2,49 +2,58 @@ using Microsoft.AspNetCore.Mvc;
 using Domain;
 using Persistence;
 using Microsoft.EntityFrameworkCore;
+using Domain.DTOModels;
+using AutoMapper;
+using Domain.DTOModels.Grad;
 
 namespace API.Controllers;
 
-// TODO - refactor controllers to use DTOs for project 2, avoiding to do now as project is still in development
 [ApiController]
 [Route("api/[controller]")]
 public class GradsController : ControllerBase
 {
     private readonly DataContext _context;
+    private readonly IMapper _mapper;
 
-    public GradsController(DataContext context)
+    public GradsController(DataContext context, IMapper mapper)
     {
         _context = context;
+        _mapper = mapper;
     }
 
     // GET: api/grads
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Grad>>> GetGrads()
+    public async Task<ActionResult<IEnumerable<GetGradDTO>>> GetGrads()
     {  
-        var grads = await _context.Grads
-                .Include(obj => obj.Items)
-                .ToListAsync();
-                
-        return Ok(grads);
+        var grads = await _context.Grads.Include(grad => grad.Items).ToListAsync();
+        var gradsToReturn = _mapper.Map<List<GetGradDTO>>(grads);
+
+        return Ok(gradsToReturn);
     }
 
     //GET: api/grads/42
     [HttpGet("{id}")]
-    public async Task<ActionResult<List<Grad>>> GetGrad(int id)
+    public async Task<ActionResult<GetGradDTO>> GetGrad(int id)
     {
 
         var foundGrad = await _context.Grads
-                .Where(obj => obj.Id == id)
-                .Include(obj => obj.Items)
-                .ToListAsync();
+                        .Include(grad => grad.Items)
+                        .FirstOrDefaultAsync(grad => grad.Id == id);
 
+        if (foundGrad == null) {
+            return NotFound();
+        }
 
-        return foundGrad;
+        var gradDTO = _mapper.Map<GetGradDTO>(foundGrad);
+
+        return gradDTO;
     }
 
     // POST api/grads
     [HttpPost]
-    public async Task<ActionResult<Grad>> PostGrad(Grad grad) {
+    public async Task<ActionResult<Grad>> PostGrad(CreateGradDTO gradDTO) 
+    {
+        var grad = _mapper.Map<Grad>(gradDTO);
 
         _context.Grads.Add(grad);
         await _context.SaveChangesAsync();
@@ -55,18 +64,21 @@ public class GradsController : ControllerBase
 
     // PUT: api/grads/42
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutGrad(int id, Grad gradToUpdate)
+    public async Task<IActionResult> PutGrad(int id, UpdateGradDTO gradToUpdateDTO)
     {
-        if (id != gradToUpdate.Id)
+        if (id != gradToUpdateDTO.Id)
         {
             return BadRequest("Id is invalid");
         }
 
-        // This just updates the grads username for now
-        // if you want to update a grads item, you have to use the items controlller for now
-        _context.Entry(gradToUpdate).State = EntityState.Modified;
+        var grad = await _context.Grads.FindAsync(id);
 
-        // docs mentioned a scenario where one user deletes while another updates, this try-catch is handling that
+        if (grad == null) {
+            return NotFound();
+        }
+
+        _mapper.Map(gradToUpdateDTO, grad);
+
         bool gradExists = _context.Grads.Any(x => x.Id == id);
         try
         {

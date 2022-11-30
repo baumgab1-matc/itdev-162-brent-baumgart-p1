@@ -2,6 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using Domain;
 using Persistence;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
+using Domain.DTOModels;
+using Domain.DTOModels.Item;
 
 namespace API.Controllers;
 
@@ -10,35 +13,46 @@ namespace API.Controllers;
 public class ItemsController : ControllerBase
 {
     private readonly DataContext _context;
+    private readonly IMapper _mapper;
 
-    public ItemsController(DataContext context)
+
+    public ItemsController(DataContext context, IMapper mapper)
     {
         _context = context;
+        _mapper = mapper;
     }
 
     // GET: api/items
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Item>>> GetItems()
+    public async Task<ActionResult<IEnumerable<GetItemDTO>>> GetItems()
     {
         var items = await _context.Items.ToListAsync();
-        return Ok(items);
+        var itemsToReturn = _mapper.Map<List<GetItemDTO>>(items);
+
+        return Ok(itemsToReturn);
     }
 
     //GET: api/items/42
     [HttpGet("{id}")]
-    public async Task<ActionResult<Item>> GetItem(int id)
+    public async Task<ActionResult<GetItemDTO>> GetItem(int id)
     {
-        var foundItem = await _context.Items.FindAsync(id);
+        var foundItem = await _context.Items.FirstOrDefaultAsync(item => item.Id == id);
 
         if (foundItem is null) {
             return NotFound();
         }
-        return foundItem;
+
+        var itemDTO = _mapper.Map<GetItemDTO>(foundItem);
+
+        return itemDTO;
     }
 
     // POST api/items
     [HttpPost]
-    public async Task<ActionResult<Item>> PostItem(Item item) {
+    public async Task<ActionResult<Item>> PostItem(CreateItemDTO itemDTO) 
+    {
+        var item = _mapper.Map<Item>(itemDTO);
+
         _context.Items.Add(item);
         await _context.SaveChangesAsync();
 
@@ -47,15 +61,20 @@ public class ItemsController : ControllerBase
 
     // PUT: api/items/42
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutItem(int id, Item itemToUpdate)
+    public async Task<IActionResult> PutItem(int id, UpdateItemDTO itemToUpdateDTO)
     {
-        if (id != itemToUpdate.Id)
+        if (id != itemToUpdateDTO.Id)
         {
             return BadRequest("Id is invalid");
         }
 
-        // updates an item that a grad has
-        _context.Entry(itemToUpdate).State = EntityState.Modified;
+        var item = await _context.Items.FindAsync(id);
+
+        if (item == null) {
+            return NotFound();
+        }
+
+        _mapper.Map(itemToUpdateDTO, item);
 
         bool itemExists = _context.Items.Any(x => x.Id == id);
         try

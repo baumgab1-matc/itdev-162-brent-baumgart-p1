@@ -1,0 +1,19 @@
+<h3>Cart</h3>
+
+<div *ngIf="items.length == 0;else show_items">No items in cart!</div>
+
+<ng-template #show_items>
+  <div class="cart-item" *ngFor="let item of items">
+     <app-cart-item [item]="item"></app-cart-item>
+  </div>
+
+  <div class="mt-5">
+     Order Total: {{cartTotal | currency}}
+  </div>
+
+  <hr>
+
+  <button type="button" class="btn btn-primary mt-5" (click)="placeOrder()" [disabled]="isButtonDisabled">Place Order</button>
+  <button type="button" class="btn btn-danger mt-5" (click)="cancelOrder()" [disabled]="isButtonDisabled">Cancel Order</button>
+</ng-template>
+

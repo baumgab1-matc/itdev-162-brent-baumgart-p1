@@ -1,4 +1,28 @@
-<!-- todo good place to stop for project 1, for project 2 pass data to component here -->
 
-<p>profile works!</p>
-{{id}}
+<ng-template [ngIf]="loadedGrad | async">
+
+    <div>
+        <a [routerLink]="['/create-item/', grad.id]" class="btn btn-primary">Add Item</a>
+        <button class="btn btn-danger" (click)="deleteProfile()">Delete Profile</button>
+    </div>
+
+    <div class="row">
+        <ng-container *ngFor="let item of grad.items" >
+            <div class="col-sm-4 d-flex justify-content-center p-3">
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h2 class="card-title">{{item.name}} - {{item.price | currency}}</h2>
+        
+                    <p>{{item.description}} | {{item.category}}</p>
+
+                    <button type="button" class="btn btn-primary" (click)="addToCart(item)">Buy</button> | 
+                    <a [routerLink]="['/edit-item/', grad.id, item.id]">Edit</a>
+                </div>
+            </div>
+            </div>
+        </ng-container>
+    </div>
+    
+    
+</ng-template>
+

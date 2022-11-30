@@ -1,0 +1,34 @@
+
+<form #f="ngForm" (ngSubmit)="onSubmit(f.value)" ngNativeValidate>
+    <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" class="form-control" id="name" name="name" [ngModel]="item.name" required />
+    </div>
+    
+    <!-- vars for api -->
+    <input hidden type="text" class="form-control" id="gradId" name="gradId" [ngModel]="gradId">
+
+    <div class="form-group mt-2">
+        <label for="price">Price</label>
+        <input type="number" min="1" max="10000" step="any" class="form-control" id="price" name="price" [ngModel]="item.price" required/>
+    </div>
+    
+    <div class="form-group mt-2">
+        <label for="category">Category</label>
+        <select class="form-control" id="category" name="category" [ngModel]="item.category">
+        <option>Text Books</option>
+        <option>Electronics</option>
+        <option>School Supplies</option>
+        <option>Furniture</option>
+        <option>Other</option>
+        </select>
+    </div>
+
+    <div class="form-group mt-2">
+        <label for="description">Item Description</label>
+        <textarea class="form-control" id="description" rows="3" name="description" [ngModel]="item.description" required></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-4">Add</button> 
+    <button type="button" class="btn btn-danger mt-4" (click)="cancelAdd()">Cancel</button>
+</form>
